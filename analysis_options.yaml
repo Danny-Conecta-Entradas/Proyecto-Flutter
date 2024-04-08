@@ -26,6 +26,7 @@ linter:
     non_constant_identifier_names: false
     unnecessary_this: false
     no_logic_in_create_state: false
+    unnecessary_brace_in_string_interps: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
