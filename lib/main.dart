@@ -195,7 +195,11 @@ class AppState extends State<App> {
                               return;
                             }
 
-                            final dateString = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+                            final year = date.year.toString().padLeft(4, '0');
+                            final month = date.month.toString().padLeft(2, '0');
+                            final day = date.day.toString().padLeft(2, '0');
+
+                            final dateString = '${year}-${month}-${day}';
                             this._birth_dateController.text = dateString;
                           },
 
