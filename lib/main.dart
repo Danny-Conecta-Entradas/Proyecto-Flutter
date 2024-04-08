@@ -71,7 +71,7 @@ class AppState extends State<App> {
 
   final _birth_dateController = TextEditingController();
 
-  PlatformFile _photo_file = PlatformFile(name: '', size: 0, bytes: Uint8List(0));
+  PlatformFile _photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +225,7 @@ class AppState extends State<App> {
                             final file = platformFiles.firstOrNull;
 
                             if (file == null) {
-                              this._photo_file = PlatformFile(name: '', size: 0, bytes: Uint8List(0));
+                              this._photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
                               return;
                             }
 
@@ -276,11 +276,13 @@ class AppState extends State<App> {
                               'birth_date': DateTime.parse(this._birth_dateController.text).millisecondsSinceEpoch.toString(),
                             });
 
+                            print('File Name: ${this._photo_file.name}');
+
                             request.files.add(
                               http.MultipartFile.fromBytes(
                                 'photo_file',
                                 // If `filename` is not set, file is sent to the server as text
-                                filename: 'photo.${this._photo_file.extension ?? 'jpg'}',
+                                filename: this._photo_file.name,
                                 this._photo_file.bytes == null ? List.empty() : this._photo_file.bytes as List<int>,
                                 contentType: MediaType('image', this._photo_file.extension ?? 'jpg'),
                               )
