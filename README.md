@@ -25,6 +25,7 @@ https://stackoverflow.com/questions/49125191/how-to-upload-images-and-file-to-a-
 https://github.com/flutter/flutter/issues/37311#issuecomment-516967285  
 https://stackoverflow.com/questions/50645703/how-to-get-apk-and-ipa-file-from-flutter  
 https://pub.dev/packages/loader_overlay  
+https://stackoverflow.com/questions/50654820/flutter-could-not-prepare-to-run-the-isolate  
 
 
 A new Flutter project.

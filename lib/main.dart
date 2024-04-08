@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:form_builder_file_picker/form_builder_file_picker.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:proyecto_flutter_daniel/widgets.dart';
 
 
 void main() {
@@ -16,7 +17,7 @@ class AppRoot extends StatelessWidget {
   const AppRoot({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
 
     return MaterialApp(
       title: 'Flutter App',
@@ -48,7 +49,7 @@ class App extends StatefulWidget {
   const App({super.key, required this.title});
 
   @override
-  State<App> createState() => AppState();
+  createState() => AppState() as State<App>;
 
 }
 
@@ -71,29 +72,214 @@ class AppState extends State<App> {
 
   final _birth_dateController = TextEditingController();
 
-  PlatformFile _photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
+  var _photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
 
   @override
-  Widget build(BuildContext context) {
+  build(BuildContext context) {
     // final mediaQueryContext = MediaQuery.of(context);
 
-    InputDecoration createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
-      const baseInputDecorationSettings = {
-        'labelStyle': TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 18, fontWeight: FontWeight.bold),
-        'hintStyle': TextStyle(color: Color.fromARGB(255, 159, 159, 159)),
-        'enabledBorder': UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 149, 149, 149))),
-        'focusedBorder': UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 0, 255, 234))),
-        'errorStyle': TextStyle(color: Colors.red, fontSize: 14),
-        'errorBorder': UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-      };
+    nameValidator(String? name) {
+      if (name == null) {
+        return null;
+      }
 
-      final mixedInputDecorationSettigns  = {
-        ...baseInputDecorationSettings,
-        ...inputDecorationSettings,
-      }.map((key, value) => MapEntry(Symbol(key), value));
-      final inputDecoration = Function.apply(InputDecoration.new, [], mixedInputDecorationSettigns);
+      if (name == '') {
+        return 'Name cannot be empty';
+      }
 
-      return inputDecoration;
+      if (name.length > 30) {
+        return 'Name cannot be longer than 30 characters';
+      }
+
+      return null;
+    }
+
+    dniValidator(String? dni) {
+      if (dni == null) {
+        return null;
+      }
+
+      if (dni == '') {
+        return 'DNI cannot be empty';
+      }
+
+      final dniRegexp = RegExp(r'^[1-9]{8,8}[A-Z]$');
+      if (!dniRegexp.hasMatch(dni)) {
+        return 'DNI must follow this format: 12345678A';
+      }
+
+      return null;
+    }
+
+    birth_dateValidator(String? birth_date) {
+      if (birth_date == null) {
+        return null;
+      }
+
+      if (birth_date == '') {
+        return 'Birth Date cannot be empty';
+      }
+
+      return null;
+    }
+
+    selectDate() async {
+      DateTime? date = await showDatePicker(
+        context: context,
+        firstDate: DateTime.parse('1920-01-01'),
+        lastDate: DateTime.now()
+      );
+
+      if (date == null) {
+        this._birth_dateController.text = '';
+        return;
+      }
+
+      final year = date.year.toString().padLeft(4, '0');
+      final month = date.month.toString().padLeft(2, '0');
+      final day = date.day.toString().padLeft(2, '0');
+
+      final dateString = '${year}-${month}-${day}';
+      this._birth_dateController.text = dateString;
+    }
+
+    onFileSelect(platformFiles) {
+      if (platformFiles == null) {
+        return;
+      }
+
+      final file = platformFiles.firstOrNull;
+
+      if (file == null) {
+        this._photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
+        return;
+      }
+
+      file.bytes;
+
+      this._photo_file = file;
+    }
+
+    submit() async {
+      if (!this._formKey.currentState!.validate()) {
+        return;
+      }
+
+      final url = Uri.https('proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app', '/api/send-data/');
+
+      // final url = Uri.http('10.0.2.2:8080', '/api/send-data/');
+
+      late http.StreamedResponse response;
+
+      final request = http.MultipartRequest('POST', url);
+
+      request.fields.addAll({
+        'creation_date': DateTime.now().millisecondsSinceEpoch.toString(),
+        'name': this._nameController.text,
+        'dni': this._dniController.text,
+        'birth_date': DateTime.parse(this._birth_dateController.text).millisecondsSinceEpoch.toString(),
+      });
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'photo_file',
+          // If `filename` is not set, file is sent to the server as text
+          filename: this._photo_file.name,
+          this._photo_file.bytes == null ? List.empty() : this._photo_file.bytes as List<int>,
+          contentType: MediaType('image', this._photo_file.extension ?? 'jpg'),
+        )
+      );
+
+      try {
+        context.loaderOverlay.show();
+
+        response = await request.send();
+      }
+      catch (error) {
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('An error happened'),
+                content: Flex(
+                  direction: Axis.vertical,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Request failded.'),
+                    const SizedBox(height: 20,),
+                    Text(error.toString()),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {Navigator.pop(context);},
+                    child: const Text('Accept'),
+                  ),
+                ],
+              );
+            },
+          );
+
+          return;
+        }
+      }
+      finally {
+        if (context.mounted) {
+          context.loaderOverlay.hide();
+        }
+      }
+
+      if (response.statusCode != 200) {
+        response.stream.bytesToString()
+        .then((value) {
+          print('Response: ${value}');
+          print('Response Status: ${response.statusCode}');
+        });
+
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('An error happened'),
+                content: const Flex(
+                  direction: Axis.vertical,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Could not send data to server.'),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {Navigator.pop(context);},
+                    child: const Text('Accept'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        return;
+      }
+
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Data was uploaded successfuly'),
+              content: const Text('Click Ok to continue.'),
+              actions: [
+                TextButton(
+                  onPressed: () {Navigator.pop(context);},
+                  child: const Text('Ok'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
 
     return FractionallySizedBox(
@@ -133,87 +319,30 @@ class AppState extends State<App> {
                       children: [
                         const Text('Send Data', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
                         const SizedBox(height: 40,),
-                        TextFormField(
+                        InputTextField(
+                          label: 'Name',
                           controller: this._nameController,
                           style: const TextStyle(color: Colors.white),
-                          decoration: createInputDecoration({'labelText': 'Name'}),
 
-                          validator: (String? name) {
-                            if (name == null) {
-                              return null;
-                            }
-
-                            if (name == '') {
-                              return 'Name cannot be empty';
-                            }
-
-                            if (name.length > 30) {
-                              return 'Name cannot be longer than 30 characters';
-                            }
-
-                            return null;
-                          },
+                          validator: nameValidator,
                         ),
                         const SizedBox(height: 20,),
-                        TextFormField(
+                        InputTextField(
+                          label: 'DNI',
                           controller: this._dniController,
                           style: const TextStyle(color: Colors.white),
-                          decoration: createInputDecoration({'labelText': 'DNI'}),
 
-                          validator: (String? dni) {
-                            if (dni == null) {
-                              return null;
-                            }
-
-                            if (dni == '') {
-                              return 'DNI cannot be empty';
-                            }
-
-                            final dniRegexp = RegExp(r'^[1-9]{8,8}[A-Z]$');
-                            if (!dniRegexp.hasMatch(dni)) {
-                              return 'DNI must follow this format: 12345678A';
-                            }
-
-                            return null;
-                          },
+                          validator: dniValidator,
                         ),
                         const SizedBox(height: 20,),
-                        TextFormField(
-                          readOnly: true,
+                        InputTextField(
+                          label: 'Birth Date',
                           controller: this._birth_dateController,
                           style: const TextStyle(color: Colors.white),
-                          decoration: createInputDecoration({'labelText': 'Birth Date'}),
-                          onTap: () async {
-                            DateTime? date = await showDatePicker(
-                              context: context,
-                              firstDate: DateTime.parse('1920-01-01'),
-                              lastDate: DateTime.now()
-                            );
 
-                            if (date == null) {
-                              this._birth_dateController.text = '';
-                              return;
-                            }
+                          onTap: selectDate,
 
-                            final year = date.year.toString().padLeft(4, '0');
-                            final month = date.month.toString().padLeft(2, '0');
-                            final day = date.day.toString().padLeft(2, '0');
-
-                            final dateString = '${year}-${month}-${day}';
-                            this._birth_dateController.text = dateString;
-                          },
-
-                          validator: (String? birth_date) {
-                            if (birth_date == null) {
-                              return null;
-                            }
-
-                            if (birth_date == '') {
-                              return 'Birth Date cannot be empty';
-                            }
-
-                            return null;
-                          },
+                          validator: birth_dateValidator,
                         ),
                         const SizedBox(height: 20,),
                         FormBuilderFilePicker(
@@ -221,22 +350,7 @@ class AppState extends State<App> {
                           decoration: createInputDecoration({'labelText': 'Photo'}),
                           withData: true,
                           previewImages: true,
-                          onChanged: (platformFiles) {
-                            if (platformFiles == null) {
-                              return;
-                            }
-
-                            final file = platformFiles.firstOrNull;
-
-                            if (file == null) {
-                              this._photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
-                              return;
-                            }
-
-                            file.bytes;
-
-                            this._photo_file = file;
-                          },
+                          onChanged: onFileSelect,
                           typeSelectors: [
                             TypeSelector(
                               type: FileType.image,
@@ -260,127 +374,7 @@ class AppState extends State<App> {
                         ),
                         const SizedBox(height: 20,),
                         ElevatedButton(
-                          onPressed: () async {
-                            if (!this._formKey.currentState!.validate()) {
-                              return;
-                            }
-
-                            final url = Uri.https('proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app', '/api/send-data/');
-
-                            // final url = Uri.http('10.0.2.2:8080', '/api/send-data/');
-
-                            late http.StreamedResponse response;
-
-                            final request = http.MultipartRequest('POST', url);
-
-                            request.fields.addAll({
-                              'creation_date': DateTime.now().millisecondsSinceEpoch.toString(),
-                              'name': this._nameController.text,
-                              'dni': this._dniController.text,
-                              'birth_date': DateTime.parse(this._birth_dateController.text).millisecondsSinceEpoch.toString(),
-                            });
-
-                            request.files.add(
-                              http.MultipartFile.fromBytes(
-                                'photo_file',
-                                // If `filename` is not set, file is sent to the server as text
-                                filename: this._photo_file.name,
-                                this._photo_file.bytes == null ? List.empty() : this._photo_file.bytes as List<int>,
-                                contentType: MediaType('image', this._photo_file.extension ?? 'jpg'),
-                              )
-                            );
-
-                            try {
-                              context.loaderOverlay.show();
-
-                              response = await request.send();
-                            }
-                            catch (error) {
-                              if (context.mounted) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('An error happened'),
-                                      content: Flex(
-                                        direction: Axis.vertical,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Text('Request failded.'),
-                                          const SizedBox(height: 20,),
-                                          Text(error.toString()),
-                                        ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {Navigator.pop(context);},
-                                          child: const Text('Accept'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-
-                                return;
-                              }
-                            }
-                            finally {
-                              if (context.mounted) {
-                                context.loaderOverlay.hide();
-                              }
-                            }
-
-                            if (response.statusCode != 200) {
-                              response.stream.bytesToString()
-                              .then((value) {
-                                print('Response: ${value}');
-                                print('Response Status: ${response.statusCode}');
-                              });
-
-                              if (context.mounted) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('An error happened'),
-                                      content: const Flex(
-                                        direction: Axis.vertical,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text('Could not send data to server.'),
-                                        ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {Navigator.pop(context);},
-                                          child: const Text('Accept'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                              return;
-                            }
-
-                            if (context.mounted) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Data was uploaded successfuly'),
-                                    content: const Text('Click Ok to continue.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {Navigator.pop(context);},
-                                        child: const Text('Ok'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            }
-                          },
+                          onPressed: submit,
 
                           child: const Text('Submit'),
                         ),
