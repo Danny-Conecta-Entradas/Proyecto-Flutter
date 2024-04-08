@@ -274,13 +274,11 @@ class AppState extends State<App> {
                             final request = http.MultipartRequest('POST', url);
 
                             request.fields.addAll({
-                              'creation_date': DateTime.now().microsecondsSinceEpoch.toString(),
+                              'creation_date': DateTime.now().millisecondsSinceEpoch.toString(),
                               'name': this._nameController.text,
                               'dni': this._dniController.text,
                               'birth_date': DateTime.parse(this._birth_dateController.text).millisecondsSinceEpoch.toString(),
                             });
-
-                            print('File Name: ${this._photo_file.name}');
 
                             request.files.add(
                               http.MultipartFile.fromBytes(
