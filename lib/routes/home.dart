@@ -314,6 +314,7 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 20,),
                     FormBuilderFilePicker(
+                      maxFiles: 1,
                       name: "images",
                       decoration: createInputDecoration({'labelText': 'Photo'}),
                       withData: true,
