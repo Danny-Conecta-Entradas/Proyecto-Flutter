@@ -1,4 +1,15 @@
-# test_drive
+# proyecto_flutter_daniel
+
+
+Install dependencies
+```console
+flutter packages get
+```
+
+Delete built files in case there is a problem
+```
+flutter clean
+```
 
 
 ## Resources

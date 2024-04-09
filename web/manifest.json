@@ -1,6 +1,6 @@
 {
-    "name": "test_drive",
-    "short_name": "test_drive",
+    "name": "proyecto_flutter_daniel",
+    "short_name": "proyecto_flutter_daniel",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
