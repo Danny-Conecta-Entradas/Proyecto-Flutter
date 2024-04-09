@@ -20,7 +20,7 @@ https://www.youtube.com/watch?v=u0e2L5yoxFI&ab_channel=Fireship
 https://github.com/shyndman/flutter_layout_grid  
 https://stackoverflow.com/questions/49203740/how-to-change-the-entire-themes-text-color-in-flutter  
 https://stackoverflow.com/questions/57242651/using-fractionallysizedbox-in-a-row
-https://docs.flutter.dev/cookbook/networking/fetch-data
+https://docs.flutter.dev/cookbook/networking/fetch-data  
 https://pub.dev/packages/http  
 https://stackoverflow.com/questions/46551268/when-the-keyboard-appears-the-flutter-widgets-resize-how-to-prevent-this  
 https://stackoverflow.com/questions/53398476/center-widget-vertically-inside-a-singlechildscrollview  
@@ -37,6 +37,8 @@ https://github.com/flutter/flutter/issues/37311#issuecomment-516967285
 https://stackoverflow.com/questions/50645703/how-to-get-apk-and-ipa-file-from-flutter  
 https://pub.dev/packages/loader_overlay  
 https://stackoverflow.com/questions/50654820/flutter-could-not-prepare-to-run-the-isolate  
+https://stackoverflow.com/questions/55771635/flutter-packages-get-does-not-install-new-package  
+https://stackoverflow.com/questions/65176443/part-and-export-what-is-the-usage-in-dart  
 
 
 A new Flutter project.

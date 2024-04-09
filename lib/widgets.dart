@@ -1,4 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show
+  TextStyle, Colors, Color, UnderlineInputBorder, BorderSide,
+  FontWeight, InputDecoration, StatelessWidget, TextEditingController,
+  Widget, BuildContext, TextFormField
+;
 
 createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
   const baseInputDecorationSettings = {
@@ -10,10 +14,12 @@ createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
     'errorBorder': UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
   };
 
-  final mixedInputDecorationSettigns  = {
+  final mixedInputDecorationSettigns = {
     ...baseInputDecorationSettings,
     ...inputDecorationSettings,
-  }.map((key, value) => MapEntry(Symbol(key), value));
+  }
+  .map((key, value) => MapEntry(Symbol(key), value));
+
   final inputDecoration = Function.apply(InputDecoration.new, [], mixedInputDecorationSettigns);
 
   return inputDecoration;
