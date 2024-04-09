@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart' show
-  runApp, StatelessWidget, BuildContext, MaterialApp, ThemeData, Scaffold,
-  AppBar, Text, Colors, Color, DefaultTextStyle, TextStyle
-;
+import 'package:flutter/material.dart' show AppBar, BoxDecoration, BuildContext, Color, Colors, Container, DefaultTextStyle, Drawer, DrawerHeader, EdgeInsets, FractionallySizedBox, GlobalKey, Icon, Icons, ListTile, ListView, MaterialApp, MaterialPageRoute, Navigator, NavigatorState, Scaffold, ScaffoldState, StatelessWidget, Text, TextStyle, ThemeData, Widget, runApp;
 import 'package:loader_overlay/loader_overlay.dart' show LoaderOverlay;
-import 'package:proyecto_flutter_daniel/routes/home.dart' show Home;
+import './routes.dart' show routes;
 
+
+/// Handle nested navigation
+final navigatorKey = GlobalKey<NavigatorState>();
+final scaffoldKey = GlobalKey<ScaffoldState>();
 
 void main() {
   runApp(const AppRoot());
@@ -16,24 +17,110 @@ class AppRoot extends StatelessWidget {
 
   @override
   build(BuildContext context) {
-
     return MaterialApp(
       title: 'Flutter App',
       theme: ThemeData(),
 
       home: Scaffold(
+        key: scaffoldKey,
+
         appBar: AppBar(
           title: const Text('Flutter App'),
           backgroundColor: const Color.fromARGB(255, 48, 102, 181),
           foregroundColor: Colors.white,
         ),
 
-        body: const LoaderOverlay(
+        drawer: const NavigationDrawer(),
+
+        body: LoaderOverlay(
           child: DefaultTextStyle(
-            style: TextStyle(color: Colors.white),
-            child: Home(title: 'App Title'),
+            style: const TextStyle(color: Colors.white),
+
+            child: FractionallySizedBox(
+              widthFactor: 1.0,
+              heightFactor: 1.0,
+
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                color: const Color.fromARGB(255, 5, 69, 109),
+
+                child: AppNavigation(routes: routes),
+              )
+            )
           )
-        )
+        ),
+      ),
+    );
+  }
+
+}
+
+
+class AppNavigation extends StatelessWidget {
+
+  const AppNavigation({super.key, required this.routes});
+
+  final Map<String, Widget Function(BuildContext)> routes;
+
+  @override
+  build(BuildContext context) {
+    return Navigator(
+      key: navigatorKey,
+
+      initialRoute: '/',
+
+      onGenerateRoute: (settings) {
+        final builder = this.routes[settings.name];
+
+        if (builder == null) {
+          throw Exception('Invalid route: ${settings.name}');
+        }
+
+        return MaterialPageRoute(builder: builder, settings: settings);
+      },
+    );
+  }
+
+}
+
+
+class NavigationDrawer extends StatelessWidget {
+
+  const NavigationDrawer({super.key});
+
+  @override
+  build(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color.fromARGB(255, 6, 140, 155),
+
+      child: ListView(
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(color: Color.fromARGB(255, 36, 85, 95)),
+            child: Text(
+              'Navigation Panel',
+              style: TextStyle(color: Colors.white, fontSize: 24,),
+            )
+          ),
+          ListTile(
+            title: const Text('Home', style: TextStyle(color: Colors.white),),
+            leading: const Icon(Icons.home, color: Colors.white,),
+            onTap: () {
+              navigatorKey.currentState?.pushNamed('/');
+
+              scaffoldKey.currentState?.closeDrawer();
+            },
+          ),
+          ListTile(
+            title: const Text('View Registry', style: TextStyle(color: Colors.white),),
+            leading: const Icon(Icons.table_chart, color: Colors.white,),
+            onTap: () {
+              navigatorKey.currentState?.pushNamed('/sonic');
+
+              scaffoldKey.currentState?.closeDrawer();
+            },
+          ),
+        ],
       ),
     );
   }

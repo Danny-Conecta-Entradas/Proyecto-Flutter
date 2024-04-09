@@ -39,6 +39,12 @@ https://pub.dev/packages/loader_overlay
 https://stackoverflow.com/questions/50654820/flutter-could-not-prepare-to-run-the-isolate  
 https://stackoverflow.com/questions/55771635/flutter-packages-get-does-not-install-new-package  
 https://stackoverflow.com/questions/65176443/part-and-export-what-is-the-usage-in-dart  
+https://api.flutter.dev/flutter/widgets/Navigator-class.html  
+https://docs.flutter.dev/cookbook/navigation  
+https://api.flutter.dev/flutter/material/Drawer-class.html  
+https://stackoverflow.com/questions/70902047/change-vs-code-to-auto-import-files-in-flutter-relatively  
+https://stackoverflow.com/questions/52962112/how-to-navigate-without-context-in-flutter-app  
+https://stackoverflow.com/questions/55213680/in-a-nested-navigator-structure-of-flutter-how-do-you-get-the-a-specific-naviga  
 
 
 A new Flutter project.

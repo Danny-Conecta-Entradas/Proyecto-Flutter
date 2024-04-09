@@ -5,8 +5,8 @@ import 'package:flutter/material.dart' show
   State, GlobalKey, TextEditingController, StatefulWidget,
   BuildContext, FormState, showDatePicker, showDialog, AlertDialog,
   Text, SizedBox, Flex, Axis, TextButton, Navigator, ElevatedButton,
-  MainAxisSize, FractionallySizedBox, Container, EdgeInsets, Colors, Color,
-  Center, SingleChildScrollView, MainAxisAlignment, Form, TextStyle, BoxConstraints,
+  MainAxisSize, Container, EdgeInsets, Colors, Color, SingleChildScrollView,
+  MainAxisAlignment, Form, TextStyle, BoxConstraints, Center,
   BoxDecoration, BorderRadius, Border, Radius, FontWeight, Icons, Icon
 ;
 import 'package:form_builder_file_picker/form_builder_file_picker.dart' show
@@ -257,112 +257,103 @@ class _HomeState extends State<Home> {
       }
     }
 
-    return FractionallySizedBox(
+    return Center(
       widthFactor: 1.0,
       heightFactor: 1.0,
 
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        color: const Color.fromARGB(255, 24, 185, 110),
+      child: SingleChildScrollView(
+        child: Flex(
+          direction: Axis.vertical,
+          mainAxisAlignment: MainAxisAlignment.center,
 
-        child: Center(
-          widthFactor: 1.0,
-          heightFactor: 1.0,
+          children: [
+            Form(
+              key: this._formKey,
 
-          child: SingleChildScrollView(
-            child: Flex(
-              direction: Axis.vertical,
-              mainAxisAlignment: MainAxisAlignment.center,
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 400),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 105, 23, 168),
+                  border: Border.all(width: 2, color: const Color.fromARGB(255, 255, 255, 255)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
 
-              children: [
-                Form(
-                  key: this._formKey,
+                child: Flex(
+                  direction: Axis.vertical,
+                  mainAxisAlignment: MainAxisAlignment.center,
 
-                  child: Container(
-                    constraints: const BoxConstraints(minHeight: 400),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 105, 23, 168),
-                      border: Border.all(width: 2, color: const Color.fromARGB(255, 255, 255, 255)),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  children: [
+                    const Text('Send Data', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                    const SizedBox(height: 40,),
+                    InputTextField(
+                      label: 'Name',
+                      controller: this._nameController,
+                      style: const TextStyle(color: Colors.white),
+
+                      validator: nameValidator,
                     ),
+                    const SizedBox(height: 20,),
+                    InputTextField(
+                      label: 'DNI',
+                      controller: this._dniController,
+                      style: const TextStyle(color: Colors.white),
 
-                    child: Flex(
-                      direction: Axis.vertical,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      validator: dniValidator,
+                    ),
+                    const SizedBox(height: 20,),
+                    InputTextField(
+                      label: 'Birth Date',
+                      readOnly: true,
+                      controller: this._birth_dateController,
+                      style: const TextStyle(color: Colors.white),
 
-                      children: [
-                        const Text('Send Data', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                        const SizedBox(height: 40,),
-                        InputTextField(
-                          label: 'Name',
-                          controller: this._nameController,
-                          style: const TextStyle(color: Colors.white),
+                      onTap: selectDate,
 
-                          validator: nameValidator,
-                        ),
-                        const SizedBox(height: 20,),
-                        InputTextField(
-                          label: 'DNI',
-                          controller: this._dniController,
-                          style: const TextStyle(color: Colors.white),
+                      validator: birth_dateValidator,
+                    ),
+                    const SizedBox(height: 20,),
+                    FormBuilderFilePicker(
+                      name: "images",
+                      decoration: createInputDecoration({'labelText': 'Photo'}),
+                      withData: true,
+                      previewImages: true,
+                      onChanged: onFileSelect,
+                      typeSelectors: [
+                        TypeSelector(
+                          type: FileType.image,
+                          selector: Flex(
+                            direction: Axis.horizontal,
 
-                          validator: dniValidator,
-                        ),
-                        const SizedBox(height: 20,),
-                        InputTextField(
-                          label: 'Birth Date',
-                          controller: this._birth_dateController,
-                          style: const TextStyle(color: Colors.white),
-
-                          onTap: selectDate,
-
-                          validator: birth_dateValidator,
-                        ),
-                        const SizedBox(height: 20,),
-                        FormBuilderFilePicker(
-                          name: "images",
-                          decoration: createInputDecoration({'labelText': 'Photo'}),
-                          withData: true,
-                          previewImages: true,
-                          onChanged: onFileSelect,
-                          typeSelectors: [
-                            TypeSelector(
-                              type: FileType.image,
-                              selector: Flex(
-                                direction: Axis.horizontal,
-
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: const Icon(Icons.add_circle),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.only(top: 10, left: 8.0),
-                                    child: const Text("Select image"),
-                                  ),
-                                ],
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: const Icon(Icons.add_circle),
                               ),
-                            ),
-                          ],
-                          // onFileLoading: (val) {
-                          //   print(val);
-                          // },
-                        ),
-                        const SizedBox(height: 20,),
-                        ElevatedButton(
-                          onPressed: submit,
-
-                          child: const Text('Submit'),
+                              Container(
+                                padding: const EdgeInsets.only(top: 10, left: 8.0),
+                                child: const Text("Select image"),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    )
-                  ),
+                      // onFileLoading: (val) {
+                      //   print(val);
+                      // },
+                    ),
+                    const SizedBox(height: 20,),
+                    ElevatedButton(
+                      onPressed: submit,
+
+                      child: const Text('Submit'),
+                    ),
+                  ],
                 )
-              ],
-            ),
-          )
-        ),
+              ),
+            )
+          ],
+        )
       )
     );
   }
