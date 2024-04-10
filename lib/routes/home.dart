@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
     }
 
     selectDate() async {
-      DateTime? date = await showDatePicker(
+      final date = await showDatePicker(
         context: context,
         firstDate: DateTime.parse('1920-01-01'),
         lastDate: DateTime.now()
@@ -130,8 +130,6 @@ class _HomeState extends State<Home> {
         this._photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
         return;
       }
-
-      file.bytes;
 
       this._photo_file = file;
     }
