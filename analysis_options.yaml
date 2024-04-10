@@ -29,6 +29,7 @@ linter:
     no_logic_in_create_state: false
     unnecessary_brace_in_string_interps: false
     avoid_unnecessary_containers: false
+    library_prefixes: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
