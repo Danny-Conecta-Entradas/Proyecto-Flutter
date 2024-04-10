@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart' show
   State, GlobalKey, TextEditingController, StatefulWidget,
-  BuildContext, FormState, showDatePicker, showDialog, AlertDialog,
-  Text, SizedBox, Flex, Axis, TextButton, Navigator, ElevatedButton,
+  BuildContext, FormState, showDatePicker,
+  Text, SizedBox, Flex, Axis, ElevatedButton,
   MainAxisSize, Container, EdgeInsets, Colors, Color, SingleChildScrollView,
   MainAxisAlignment, Form, TextStyle, BoxConstraints, Center,
   BoxDecoration, BorderRadius, Border, Radius, FontWeight, Icons, Icon
@@ -15,6 +15,7 @@ import 'package:form_builder_file_picker/form_builder_file_picker.dart' show
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:loader_overlay/loader_overlay.dart' show OverlayControllerWidgetExtension;
 import 'package:http/http.dart' as http;
+import '/utils.dart';
 import '/widgets.dart' show InputTextField, createInputDecoration;
 
 class Home extends StatefulWidget {
@@ -165,35 +166,26 @@ class _HomeState extends State<Home> {
         )
       );
 
-      try {
-        context.loaderOverlay.show();
+      context.loaderOverlay.show();
 
+      try {
         response = await request.send();
       }
       catch (error) {
         if (context.mounted) {
-          showDialog(
+          showAlertDialog(
             context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('An error happened'),
-                content: Flex(
-                  direction: Axis.vertical,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Request failded.'),
-                    const SizedBox(height: 20,),
-                    Text(error.toString()),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {Navigator.pop(context);},
-                    child: const Text('Accept'),
-                  ),
-                ],
-              );
-            },
+            title: 'An error happened',
+            okText: 'Accept',
+            messageWidget: Flex(
+              direction: Axis.vertical,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Request failded.'),
+                const SizedBox(height: 20,),
+                Text(error.toString()),
+              ],
+            ),
           );
 
           return;
@@ -213,46 +205,28 @@ class _HomeState extends State<Home> {
         });
 
         if (context.mounted) {
-          showDialog(
+          showAlertDialog(
             context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('An error happened'),
-                content: const Flex(
-                  direction: Axis.vertical,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Could not send data to server.'),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {Navigator.pop(context);},
-                    child: const Text('Accept'),
-                  ),
-                ],
-              );
-            },
+            title: 'An error happened',
+            okText: 'Accept',
+            messageWidget: const Flex(
+              direction: Axis.vertical,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Could not send data to server.'),
+              ],
+            ),
           );
         }
         return;
       }
 
       if (context.mounted) {
-        showDialog(
+        showAlertDialog(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Data was uploaded successfuly'),
-              content: const Text('Click Ok to continue.'),
-              actions: [
-                TextButton(
-                  onPressed: () {Navigator.pop(context);},
-                  child: const Text('Ok'),
-                ),
-              ],
-            );
-          },
+          title: 'Data was uploaded successfuly',
+          message: 'Click Ok to continue.',
+          okText: 'Ok',
         );
       }
     }
@@ -339,9 +313,6 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ],
-                      // onFileLoading: (val) {
-                      //   print(val);
-                      // },
                     ),
                     const SizedBox(height: 20,),
                     ElevatedButton(
