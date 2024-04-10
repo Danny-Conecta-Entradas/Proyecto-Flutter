@@ -20,9 +20,7 @@ import '/widgets.dart' show InputTextField, createInputDecoration;
 
 class Home extends StatefulWidget {
 
-  final String title;
-
-  const Home({super.key, required this.title});
+  const Home({super.key});
 
   @override
   createState() => _HomeState() as State<Home>;
@@ -31,14 +29,6 @@ class Home extends StatefulWidget {
 
 
 class _HomeState extends State<Home> {
-
-  // String _birth_date = '';
-
-  // void setBirthDate(String newValue) {
-  //   setState(() {
-  //     this._birth_date = newValue;
-  //   });
-  // }
 
   final _formKey = GlobalKey<FormState>();
 

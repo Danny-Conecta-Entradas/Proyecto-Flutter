@@ -4,7 +4,7 @@ import 'routes/table_registry.dart' show TableRegistry;
 
 final routes = <String, WidgetBuilder>{
 
-  '/': (context) => const Home(title: 'App Title'),
+  '/': (context) => const Home(),
 
   '/data-table': (context) => const TableRegistry(),
 
