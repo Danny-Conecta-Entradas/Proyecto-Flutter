@@ -1,23 +1,11 @@
-import 'package:flutter/material.dart' show WidgetBuilder, Text, TextStyle, Container, Colors, ElevatedButton, Flex, Axis;
+import 'package:flutter/material.dart' show WidgetBuilder;
 import '/routes/home.dart' show Home;
+import 'routes/table_registry.dart' show TableRegistry;
 
 final routes = <String, WidgetBuilder>{
 
   '/': (context) => const Home(title: 'App Title'),
 
-  '/data-table': (context) => Container(color: Colors.amber, child:Flex(
-    direction: Axis.vertical,
-
-    children: [
-      ElevatedButton(
-        onPressed: () {},
-        child: const Text('Button 1', style: TextStyle(color: Colors.black)),
-      ),
-      ElevatedButton(
-        onPressed: () {},
-        child: const Text('Button 2', style: TextStyle(color: Colors.black)),
-      ),
-    ],
-  )),
+  '/data-table': (context) => const TableRegistry(),
 
 };

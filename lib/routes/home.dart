@@ -50,6 +50,35 @@ class _HomeState extends State<Home> {
 
   var _photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
 
+  sendData({required String name, required String dni, required String birth_date, required PlatformFile photo_file}) async {
+    final url = Uri.https('proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app', '/api/send-data/');
+
+    // final url = Uri.http('10.0.2.2:8080', '/api/send-data/');
+
+    final request = http.MultipartRequest('POST', url);
+
+    request.fields.addAll({
+      'creation_date': DateTime.now().millisecondsSinceEpoch.toString(),
+      'name': name,
+      'dni': dni,
+      'birth_date': DateTime.parse(birth_date).millisecondsSinceEpoch.toString(),
+    });
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'photo_file',
+        // If `filename` is not set, file is sent to the server as text
+        filename: photo_file.name,
+        this._photo_file.bytes == null ? List.empty() : this._photo_file.bytes as List<int>,
+        contentType: MediaType('image', this._photo_file.extension ?? 'jpg'),
+      )
+    );
+
+    final response = await request.send();
+
+    return response;
+  }
+
   @override
   build(BuildContext context) {
     // final mediaQueryContext = MediaQuery.of(context);
@@ -139,35 +168,17 @@ class _HomeState extends State<Home> {
         return;
       }
 
-      final url = Uri.https('proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app', '/api/send-data/');
-
-      // final url = Uri.http('10.0.2.2:8080', '/api/send-data/');
-
       late http.StreamedResponse response;
-
-      final request = http.MultipartRequest('POST', url);
-
-      request.fields.addAll({
-        'creation_date': DateTime.now().millisecondsSinceEpoch.toString(),
-        'name': this._nameController.text,
-        'dni': this._dniController.text,
-        'birth_date': DateTime.parse(this._birth_dateController.text).millisecondsSinceEpoch.toString(),
-      });
-
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'photo_file',
-          // If `filename` is not set, file is sent to the server as text
-          filename: this._photo_file.name,
-          this._photo_file.bytes == null ? List.empty() : this._photo_file.bytes as List<int>,
-          contentType: MediaType('image', this._photo_file.extension ?? 'jpg'),
-        )
-      );
 
       context.loaderOverlay.show();
 
       try {
-        response = await request.send();
+        response = await this.sendData(
+          name: this._nameController.text,
+          dni: this._dniController.text,
+          birth_date: this._birth_dateController.text,
+          photo_file: this._photo_file,
+        );
       }
       catch (error) {
         if (context.mounted) {
@@ -205,15 +216,9 @@ class _HomeState extends State<Home> {
         if (context.mounted) {
           showAlertDialog(
             context: context,
-            title: 'An error happened',
+            title: 'An error happened (Status Code: ${response.statusCode})',
             okText: 'Accept',
-            messageWidget: const Flex(
-              direction: Axis.vertical,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Could not send data to server.'),
-              ],
-            ),
+            message: 'Could not send data to server.',
           );
         }
         return;
