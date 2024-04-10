@@ -15,7 +15,7 @@ import 'package:form_builder_file_picker/form_builder_file_picker.dart' show
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:loader_overlay/loader_overlay.dart' show OverlayControllerWidgetExtension;
 import 'package:http/http.dart' as http;
-import 'package:proyecto_flutter_daniel/widgets.dart' show InputTextField, createInputDecoration;
+import '/widgets.dart' show InputTextField, createInputDecoration;
 
 class Home extends StatefulWidget {
 
@@ -315,7 +315,7 @@ class _HomeState extends State<Home> {
                     const SizedBox(height: 20,),
                     FormBuilderFilePicker(
                       maxFiles: 1,
-                      name: "images",
+                      name: "Photo",
                       decoration: createInputDecoration({'labelText': 'Photo'}),
                       withData: true,
                       previewImages: true,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart' show WidgetBuilder, Text, TextStyle, Container, Colors, ElevatedButton, Flex, Axis;
-import './routes/home.dart' show Home;
+import '/routes/home.dart' show Home;
 
 final routes = <String, WidgetBuilder>{
 
   '/': (context) => const Home(title: 'App Title'),
 
-  '/sonic': (context) => Container(color: Colors.amber, child:Flex(
+  '/data-table': (context) => Container(color: Colors.amber, child:Flex(
     direction: Axis.vertical,
 
     children: [

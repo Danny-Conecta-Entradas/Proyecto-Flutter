@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' show AppBar, BoxDecoration, BuildContext, Color, Colors, Container, DefaultTextStyle, Drawer, DrawerHeader, EdgeInsets, FractionallySizedBox, GlobalKey, Icon, Icons, ListTile, ListView, MaterialApp, MaterialPageRoute, Navigator, NavigatorState, Scaffold, ScaffoldState, StatelessWidget, Text, TextStyle, ThemeData, Widget, runApp;
 import 'package:loader_overlay/loader_overlay.dart' show LoaderOverlay;
-import './routes.dart' show routes;
+import '/routes.dart' show routes;
 
 
 /// Handle nested navigation
@@ -115,7 +115,7 @@ class NavigationDrawer extends StatelessWidget {
             title: const Text('View Registry', style: TextStyle(color: Colors.white),),
             leading: const Icon(Icons.table_chart, color: Colors.white,),
             onTap: () {
-              navigatorKey.currentState?.pushNamed('/sonic');
+              navigatorKey.currentState?.pushNamed('/data-table');
 
               scaffoldKey.currentState?.closeDrawer();
             },

@@ -12,6 +12,7 @@ createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
     'focusedBorder': UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 0, 255, 234))),
     'errorStyle': TextStyle(color: Colors.red, fontSize: 14),
     'errorBorder': UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+    'counterStyle': TextStyle(color: Colors.white)
   };
 
   final mixedInputDecorationSettigns = {
