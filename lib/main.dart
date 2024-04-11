@@ -17,7 +17,7 @@ class AppRoot extends StatelessWidget {
   const AppRoot({super.key});
 
   @override
-  build(BuildContext context) {
+  build(context) {
     return MaterialApp(
       title: 'Flutter App',
       theme: ThemeData(),
@@ -64,7 +64,7 @@ class AppNavigation extends StatelessWidget {
   final Map<String, Widget Function(BuildContext)> routes;
 
   @override
-  build(BuildContext context) {
+  build(context) {
     return Navigator(
       key: navigatorKey,
 
@@ -90,7 +90,7 @@ class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({super.key});
 
   @override
-  build(BuildContext context) {
+  build(context) {
     return Drawer(
       backgroundColor: const Color.fromARGB(255, 6, 140, 155),
 

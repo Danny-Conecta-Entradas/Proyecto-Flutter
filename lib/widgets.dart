@@ -60,7 +60,7 @@ class Box extends StatelessWidget {
   final double? heightFactor;
 
   /// Wrap the [Widget] passed to [child] named parameter
-  /// in a [Expanded] Widget for those widgets that need fit the available space
+  /// in a [Expanded] Widget for those widgets that need to fit the available space
   /// and avoid render errors like overflowing the internal [Flex] parent.
   final bool expandChild;
 

@@ -7,7 +7,6 @@ import 'package:form_builder_file_picker/form_builder_file_picker.dart' show
   FormBuilderFilePicker, PlatformFile, FileType, TypeSelector
 ;
 import 'package:loader_overlay/loader_overlay.dart' show OverlayControllerWidgetExtension;
-import 'package:http/http.dart' as http;
 import '/api.dart' show sendData;
 import '/utils.dart' show showAlertDialog;
 import '/widgets.dart' show Box, InputTextField, createInputDecoration;
@@ -126,12 +125,10 @@ class _HomeState extends State<Home> {
         return;
       }
 
-      late http.StreamedResponse response;
-
       context.loaderOverlay.show();
 
       try {
-        response = await sendData(
+        await sendData(
           name: this._nameController.text,
           dni: this._dniController.text,
           birth_date: this._birth_dateController.text,
@@ -144,7 +141,7 @@ class _HomeState extends State<Home> {
             context: context,
             title: 'An error happened',
             okText: 'Accept',
-            messageChild: Flex(
+            childMessage: Flex(
               direction: Axis.vertical,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -162,24 +159,6 @@ class _HomeState extends State<Home> {
         if (context.mounted) {
           context.loaderOverlay.hide();
         }
-      }
-
-      if (response.statusCode != 200) {
-        response.stream.bytesToString()
-        .then((value) {
-          print('Response: ${value}');
-          print('Response Status: ${response.statusCode}');
-        });
-
-        if (context.mounted) {
-          showAlertDialog(
-            context: context,
-            title: 'An error happened (Status Code: ${response.statusCode})',
-            okText: 'Accept',
-            message: 'Could not send data to server.',
-          );
-        }
-        return;
       }
 
       if (context.mounted) {

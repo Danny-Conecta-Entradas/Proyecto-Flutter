@@ -86,7 +86,7 @@ class _TableRegistryState extends State<TableRegistry> {
   }
 
   @override
-  build(BuildContext context) {
+  build(context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
 
@@ -136,13 +136,13 @@ class _TableRegistryState extends State<TableRegistry> {
                         TableCell(
                           child: Box(
                             padding: EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
-                            child: Text('Creation Date', softWrap: false,),
+                            child: Text('Creation Date'),
                           ),
                         ),
                         TableCell(
                           child: Box(
                             padding: EdgeInsets.all(10),
-                            child: Text('Name',),
+                            child: Text('Name'),
                           )
                         ),
                         TableCell(
@@ -154,7 +154,7 @@ class _TableRegistryState extends State<TableRegistry> {
                         TableCell(
                           child: Box(
                             padding: EdgeInsets.all(10),
-                            child: Text('Birth Date', softWrap: false,),
+                            child: Text('Birth Date'),
                           )
                         ),
                         TableCell(
@@ -165,61 +165,56 @@ class _TableRegistryState extends State<TableRegistry> {
                         ),
                       ],
                     ),
-                    ...this.data!.getRange(0, Math.min(this.data!.length, 100)).map(
-                      (item) {
-                        final creation_date = milisecondsTimeStampToYearMonthDay(item.creation_date);
-                        final birth_date = milisecondsTimeStampToYearMonthDay(item.birth_date);
+                    for (final item in this.data!.getRange(0, Math.min(100, this.data!.length)))
+                      TableRow(
+                        decoration: const BoxDecoration(
+                          color: Colors.blueAccent,
+                        ),
 
-                        return TableRow(
-                          decoration: const BoxDecoration(
-                            color: Colors.blueAccent,
+                        children: [
+                          TableCell(
+                            child: Box(
+                              padding: const EdgeInsets.all(10),
+                              mainAxisAlignment: MainAxisAlignment.center,
+
+                              child: Text(milisecondsTimeStampToYearMonthDay(item.creation_date)),
+                            )
                           ),
+                          TableCell(
+                            child: Box(
+                              padding: const EdgeInsets.all(10),
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                          children: [
-                            TableCell(
-                              child: Box(
-                                padding: const EdgeInsets.all(10),
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Text(item.name),
+                            )
+                          ),
+                          TableCell(
+                            child: Box(
+                              padding: const EdgeInsets.all(10),
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                                child: Text(creation_date),
-                              )
-                            ),
-                            TableCell(
-                              child: Box(
-                                padding: const EdgeInsets.all(10),
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Text(item.dni),
+                            )
+                          ),
+                          TableCell(
+                            child: Box(
+                              padding: const EdgeInsets.all(10),
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                                child: Text(item.name),
-                              )
-                            ),
-                            TableCell(
-                              child: Box(
-                                padding: const EdgeInsets.all(10),
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Text(milisecondsTimeStampToYearMonthDay(item.birth_date)),
+                            )
+                          ),
+                          TableCell(
+                            child: Box(
+                              padding: const EdgeInsets.all(10),
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                                child: Text(item.dni),
-                              )
-                            ),
-                            TableCell(
-                              child: Box(
-                                padding: const EdgeInsets.all(10),
-                                mainAxisAlignment: MainAxisAlignment.center,
-
-                                child: Text(birth_date),
-                              )
-                            ),
-                            TableCell(
-                              child: Box(
-                                padding: const EdgeInsets.all(10),
-                                mainAxisAlignment: MainAxisAlignment.center,
-
-                                child: (item.photo_url != null && item.photo_url != '') ? Image.network(item.photo_url!, width: 50, height: 50,) : null
-                              )
-                            ),
-                          ]
-                        );
-                      }
-                    )
+                              child: (item.photo_url != null && item.photo_url != '') ? Image.network(item.photo_url!, width: 50, height: 50,) : null
+                            )
+                          ),
+                        ]
+                      )
+                    ,
                   ],
                 )
             ,

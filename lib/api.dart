@@ -102,14 +102,18 @@ Future<http.StreamedResponse> sendData({
   request.files.add(
     http.MultipartFile.fromBytes(
       'photo_file',
+      photo_file.bytes == null ? List.empty() : photo_file.bytes as List<int>,
       // If `filename` is not set, file is sent to the server as text
       filename: photo_file.name,
-      photo_file.bytes == null ? List.empty() : photo_file.bytes as List<int>,
       contentType: MediaType('image', photo_file.extension ?? 'jpg'),
     )
   );
 
   final response = await request.send();
+
+  if (response.statusCode != 200) {
+    throw Exception('Request failed with status code ${response.statusCode}.');
+  }
 
   return response;
 }
