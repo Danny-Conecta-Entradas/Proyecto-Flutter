@@ -1,9 +1,11 @@
+import 'dart:async' show StreamSubscription;
 import 'dart:convert' show json;
 
-import 'package:flutter/material.dart' show Axis, BoxDecoration, BuildContext, Colors, EdgeInsets, Flex, Image, IntrinsicColumnWidth, MainAxisAlignment, SingleChildScrollView, State, StatefulWidget, Table, TableBorder, TableCell, TableCellVerticalAlignment, TableRow, Text;
+import 'package:flutter/material.dart' show Axis, BoxDecoration, BuildContext, Colors, CrossAxisAlignment, EdgeInsets, Flex, Image, IntrinsicColumnWidth, MainAxisAlignment, SingleChildScrollView, SizedBox, State, StatefulWidget, Table, TableBorder, TableCell, TableCellVerticalAlignment, TableRow, Text, TextStyle;
 import 'package:http/http.dart' as http;
+import 'dart:math' as Math;
 
-import '../utils.dart';
+import '/utils.dart';
 import '/widgets.dart';
 
 class Registry {
@@ -56,30 +58,110 @@ class _TableRegistryState extends State<TableRegistry> {
 
   List<Registry>? data;
 
-  void setData(List<Registry>? newValue) {
+  @override
+  initState() {
+    super.initState();
+
+    this.fetchData();
+  }
+
+  setData(List<Registry>? newValue) {
     setState(() {
       this.data = newValue;
     });
   }
 
+  setIsLoading(bool newValue) {
+    setState(() {
+      this.isLoading = newValue;
+    });
+  }
+
   Future<List<Registry>> getData({String? filter}) async {
-    final url = Uri.https(
-      'proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app',
+    // final url = Uri.https(
+    //   'proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app',
+    //   '/api/get-all-data/',
+    //   {'filter': filter},
+    // );
+
+    final url = Uri.http(
+      '10.0.2.2:8080',
       '/api/get-all-data/',
       {'filter': filter},
     );
 
-    final response = await http.get(url);
+    final http.Response response;
 
-    final data = Registry.fromJSONArray(json.decode(response.body));
+    try {
+      response = await http.get(url);
+    } catch (reason) {
+      print(reason);
 
-    return data;
+      throw Exception('Failed to make request to the server.');
+    }
+
+    if (response.statusCode != 200) {
+      throw Exception('Request failed with status code ${response.statusCode}.');
+    }
+
+    try {
+      final data = Registry.fromJSONArray(json.decode(response.body));
+      return data;
+    } catch (reason) {
+      print(reason);
+
+      throw Exception('Failed to parse response.');
+    }
+  }
+
+  Future fetchData({String? filter}) async {
+    late final List<Registry> data;
+
+    setIsLoading(true);
+
+    try {
+      data = await this.getData(filter: filter);
+
+      this.setData(data);
+    } catch (reason) {
+      setData(null);
+
+      final context = this.context;
+
+      if (!context.mounted) {
+        return;
+      }
+
+      showAlertDialog(
+        context: context,
+        title: 'title',
+        message: reason.toString(),
+      );
+    }
+    finally {
+      setIsLoading(false);
+    }
+  }
+
+  final _filterDelay = 500;
+
+  StreamSubscription<dynamic>? _fetchTimeout;
+
+  var isLoading = false;
+
+  filterChange(String filterValue, {required BuildContext context}) async {
+    await this._fetchTimeout?.cancel();
+
+    this._fetchTimeout = Future
+      .delayed(Duration(milliseconds: this._filterDelay))
+      .asStream()
+      .listen((event) {
+        this.fetchData(filter: filterValue);
+      });
   }
 
   @override
   build(BuildContext context) {
-    this.getData().then((value) => setData(value));
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
 
@@ -88,116 +170,136 @@ class _TableRegistryState extends State<TableRegistry> {
 
         child: Flex(
           direction: Axis.vertical,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-            Table(
-              border: TableBorder.all(color: Colors.black, width: 2),
-              defaultColumnWidth: const IntrinsicColumnWidth(flex: 1),
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              // columnWidths: const {
-              //   0: IntrinsicColumnWidth(flex: 1),
-              //   1: IntrinsicColumnWidth(flex: 1),
-              //   2: IntrinsicColumnWidth(flex: 1),
-              //   3: IntrinsicColumnWidth(flex: 1),
-              //   4: IntrinsicColumnWidth(flex: 1),
-              // },
+            Box(
+              width: 300,
 
-              children: [
-                const TableRow(
-                  decoration: BoxDecoration(
-                    color: Colors.blueGrey,
-                  ),
+              child: InputTextField(
+                label: 'Filter',
+                placeholder: 'Filter with Name and DNI',
+                style: const TextStyle(color: Colors.white),
+
+                onChange: (filterValue) => this.filterChange(filterValue, context: context),
+              ),
+            ),
+            const SizedBox(height: 20,),
+            if (this.isLoading)
+              const Box(child: Text('Loading Data...'))
+            else
+              if (this.data == null)
+                const Box(child: Text('Error'),)
+              else
+                Table(
+                  border: TableBorder.all(color: Colors.black, width: 2),
+                  defaultColumnWidth: const IntrinsicColumnWidth(flex: 1),
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  // columnWidths: const {
+                  //   0: IntrinsicColumnWidth(flex: 1),
+                  //   1: IntrinsicColumnWidth(flex: 1),
+                  //   2: IntrinsicColumnWidth(flex: 1),
+                  //   3: IntrinsicColumnWidth(flex: 1),
+                  //   4: IntrinsicColumnWidth(flex: 1),
+                  // },
 
                   children: [
-                    TableCell(
-                      child: Box(
-                        padding: EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
-                        child: Text('Creation Date', softWrap: false,),
-                      ),
-                    ),
-                    TableCell(
-                      child: Box(
-                        padding: EdgeInsets.all(10),
-                        child: Text('Name',),
-                      )
-                    ),
-                    TableCell(
-                      child: Box(
-                        padding: EdgeInsets.all(10),
-                        child: Text('DNI'),
-                      )
-                    ),
-                    TableCell(
-                      child: Box(
-                        padding: EdgeInsets.all(10),
-                        child: Text('Birth Date', softWrap: false,),
-                      )
-                    ),
-                    TableCell(
-                      child: Box(
-                        padding: EdgeInsets.all(10),
-                        child: Text('Photo'),
-                      )
-                    ),
-                  ],
-                ),
-                ...?data?.getRange(0, 100).map(
-                  (item) {
-                    final creation_date = milisecondsTimeStampToYearMonthDay(item.creation_date);
-                    final birth_date = milisecondsTimeStampToYearMonthDay(item.birth_date);
-
-                    return TableRow(
-                      decoration: const BoxDecoration(
-                        color: Colors.blueAccent,
+                    const TableRow(
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
                       ),
 
                       children: [
                         TableCell(
                           child: Box(
-                            padding: const EdgeInsets.all(10),
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            child: Text(creation_date),
+                            padding: EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+                            child: Text('Creation Date', softWrap: false,),
+                          ),
+                        ),
+                        TableCell(
+                          child: Box(
+                            padding: EdgeInsets.all(10),
+                            child: Text('Name',),
                           )
                         ),
                         TableCell(
                           child: Box(
-                            padding: const EdgeInsets.all(10),
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            child: Text(item.name),
+                            padding: EdgeInsets.all(10),
+                            child: Text('DNI'),
                           )
                         ),
                         TableCell(
                           child: Box(
-                            padding: const EdgeInsets.all(10),
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            child: Text(item.dni),
+                            padding: EdgeInsets.all(10),
+                            child: Text('Birth Date', softWrap: false,),
                           )
                         ),
                         TableCell(
                           child: Box(
-                            padding: const EdgeInsets.all(10),
-                            mainAxisAlignment: MainAxisAlignment.center,
-
-                            child: Text(birth_date),
+                            padding: EdgeInsets.all(10),
+                            child: Text('Photo'),
                           )
                         ),
-                        TableCell(
-                          child: Box(
-                            padding: const EdgeInsets.all(10),
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      ],
+                    ),
+                    ...this.data!.getRange(0, Math.min(this.data!.length, 100)).map(
+                      (item) {
+                        final creation_date = milisecondsTimeStampToYearMonthDay(item.creation_date);
+                        final birth_date = milisecondsTimeStampToYearMonthDay(item.birth_date);
 
-                            child: (item.photo_url != null && item.photo_url != '') ? Image.network(item.photo_url!, width: 50, height: 50,) : null
-                          )
-                        ),
-                      ]
-                    );
-                  }
+                        return TableRow(
+                          decoration: const BoxDecoration(
+                            color: Colors.blueAccent,
+                          ),
+
+                          children: [
+                            TableCell(
+                              child: Box(
+                                padding: const EdgeInsets.all(10),
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                child: Text(creation_date),
+                              )
+                            ),
+                            TableCell(
+                              child: Box(
+                                padding: const EdgeInsets.all(10),
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                child: Text(item.name),
+                              )
+                            ),
+                            TableCell(
+                              child: Box(
+                                padding: const EdgeInsets.all(10),
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                child: Text(item.dni),
+                              )
+                            ),
+                            TableCell(
+                              child: Box(
+                                padding: const EdgeInsets.all(10),
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                child: Text(birth_date),
+                              )
+                            ),
+                            TableCell(
+                              child: Box(
+                                padding: const EdgeInsets.all(10),
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                child: (item.photo_url != null && item.photo_url != '') ? Image.network(item.photo_url!, width: 50, height: 50,) : null
+                              )
+                            ),
+                          ]
+                        );
+                      }
+                    )
+                  ],
                 )
-              ],
-            )
+            ,
           ],
         )
       )

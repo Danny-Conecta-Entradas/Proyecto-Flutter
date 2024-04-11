@@ -119,16 +119,20 @@ class InputTextField extends StatelessWidget {
 
   const InputTextField({
     super.key,
+    this.readOnly = false,
     this.label = 'Unnamed Label',
+    this.placeholder = '',
     this.initialValue,
     this.controller,
     this.validator,
     this.style,
     this.onTap,
-    this.readOnly = false,
+    this.onChange,
   });
 
   final String label;
+
+  final String placeholder;
 
   final String? initialValue;
 
@@ -140,6 +144,8 @@ class InputTextField extends StatelessWidget {
 
   final void Function()? onTap;
 
+  final void Function(String)? onChange;
+
   final bool readOnly;
 
   @override
@@ -148,10 +154,12 @@ class InputTextField extends StatelessWidget {
       initialValue: this.initialValue,
       controller: this.controller,
       readOnly: this.readOnly,
+
       style: this.style,
-      decoration: createInputDecoration({'labelText': this.label}),
+      decoration: createInputDecoration({'labelText': this.label, 'hintText': this.placeholder}),
 
       onTap: this.onTap,
+      onChanged: this.onChange,
 
       validator: validator,
     );

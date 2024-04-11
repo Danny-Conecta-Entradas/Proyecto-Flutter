@@ -48,6 +48,9 @@ https://stackoverflow.com/questions/52962112/how-to-navigate-without-context-in-
 https://stackoverflow.com/questions/55213680/in-a-nested-navigator-structure-of-flutter-how-do-you-get-the-a-specific-naviga  
 https://api.flutter.dev/flutter/widgets/Table-class.html  
 https://docs.flutter.dev/cookbook/images/network-image  
+https://stackoverflow.com/questions/15295834/how-to-use-setinterval-settimeout-in-dart-sdk-0-4  
+https://dart.dev/language/extension-types  
+https://stackoverflow.com/questions/49713189/how-to-use-conditional-statement-within-child-attribute-of-a-flutter-widget-cen  
 
 
 A new Flutter project.
