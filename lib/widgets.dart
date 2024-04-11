@@ -128,6 +128,7 @@ class InputTextField extends StatelessWidget {
     this.style,
     this.onTap,
     this.onChange,
+    this.canRequestFocus = true,
   });
 
   final String label;
@@ -139,6 +140,8 @@ class InputTextField extends StatelessWidget {
   final TextEditingController? controller;
 
   final String? Function(String?)? validator;
+
+  final bool canRequestFocus;
 
   final TextStyle? style;
 
@@ -154,6 +157,7 @@ class InputTextField extends StatelessWidget {
       initialValue: this.initialValue,
       controller: this.controller,
       readOnly: this.readOnly,
+      canRequestFocus: this.canRequestFocus,
 
       style: this.style,
       decoration: createInputDecoration({'labelText': this.label, 'hintText': this.placeholder}),

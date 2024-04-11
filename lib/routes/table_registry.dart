@@ -1,49 +1,11 @@
 import 'dart:async' show StreamSubscription;
-import 'dart:convert' show json;
 
 import 'package:flutter/material.dart' show Axis, BoxDecoration, BuildContext, Colors, CrossAxisAlignment, EdgeInsets, Flex, Image, IntrinsicColumnWidth, MainAxisAlignment, SingleChildScrollView, SizedBox, State, StatefulWidget, Table, TableBorder, TableCell, TableCellVerticalAlignment, TableRow, Text, TextStyle;
-import 'package:http/http.dart' as http;
 import 'dart:math' as Math;
 
+import '/api.dart' show Registry, getData;
 import '/utils.dart';
 import '/widgets.dart';
-
-class Registry {
-
-  Registry({required this.creation_date, required this.name, required this.dni, required this.birth_date, required this.photo_url});
-
-  final int creation_date;
-
-  final String name;
-
-  final String dni;
-
-  final int birth_date;
-
-  final String? photo_url;
-
-  static fromJSON(dynamic data) {
-    return Registry(
-      creation_date: data['creation_date'],
-      name: data['name'],
-      dni: data['dni'],
-      birth_date: data['birth_date'],
-      photo_url: data['photo_url'],
-    );
-  }
-
-  static List<Registry> fromJSONArray(dynamic list) {
-    final registryList = <Registry>[];
-
-    for (final item in list) {
-      final registry = Registry.fromJSON(item);
-      registryList.add(registry);
-    }
-
-    return registryList;
-  }
-
-}
 
 class TableRegistry extends StatefulWidget {
 
@@ -77,50 +39,13 @@ class _TableRegistryState extends State<TableRegistry> {
     });
   }
 
-  Future<List<Registry>> getData({String? filter}) async {
-    // final url = Uri.https(
-    //   'proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app',
-    //   '/api/get-all-data/',
-    //   {'filter': filter},
-    // );
-
-    final url = Uri.http(
-      '10.0.2.2:8080',
-      '/api/get-all-data/',
-      {'filter': filter},
-    );
-
-    final http.Response response;
-
-    try {
-      response = await http.get(url);
-    } catch (reason) {
-      print(reason);
-
-      throw Exception('Failed to make request to the server.');
-    }
-
-    if (response.statusCode != 200) {
-      throw Exception('Request failed with status code ${response.statusCode}.');
-    }
-
-    try {
-      final data = Registry.fromJSONArray(json.decode(response.body));
-      return data;
-    } catch (reason) {
-      print(reason);
-
-      throw Exception('Failed to parse response.');
-    }
-  }
-
   Future fetchData({String? filter}) async {
     late final List<Registry> data;
 
     setIsLoading(true);
 
     try {
-      data = await this.getData(filter: filter);
+      data = await getData(filter: filter);
 
       this.setData(data);
     } catch (reason) {

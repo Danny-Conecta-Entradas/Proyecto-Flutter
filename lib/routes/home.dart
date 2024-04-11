@@ -12,10 +12,10 @@ import 'package:flutter/material.dart' show
 import 'package:form_builder_file_picker/form_builder_file_picker.dart' show
   FormBuilderFilePicker, PlatformFile, FileType, TypeSelector
 ;
-import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:loader_overlay/loader_overlay.dart' show OverlayControllerWidgetExtension;
 import 'package:http/http.dart' as http;
-import '/utils.dart';
+import '/api.dart' show sendData;
+import '/utils.dart' show showAlertDialog;
 import '/widgets.dart' show InputTextField, createInputDecoration;
 
 class Home extends StatefulWidget {
@@ -39,35 +39,6 @@ class _HomeState extends State<Home> {
   final _birth_dateController = TextEditingController();
 
   var _photo_file = PlatformFile(name: 'empty-file.jpg', size: 0, bytes: Uint8List(0));
-
-  sendData({required String name, required String dni, required String birth_date, required PlatformFile photo_file}) async {
-    final url = Uri.https('proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app', '/api/send-data/');
-
-    // final url = Uri.http('10.0.2.2:8080', '/api/send-data/');
-
-    final request = http.MultipartRequest('POST', url);
-
-    request.fields.addAll({
-      'creation_date': DateTime.now().millisecondsSinceEpoch.toString(),
-      'name': name,
-      'dni': dni,
-      'birth_date': DateTime.parse(birth_date).millisecondsSinceEpoch.toString(),
-    });
-
-    request.files.add(
-      http.MultipartFile.fromBytes(
-        'photo_file',
-        // If `filename` is not set, file is sent to the server as text
-        filename: photo_file.name,
-        this._photo_file.bytes == null ? List.empty() : this._photo_file.bytes as List<int>,
-        contentType: MediaType('image', this._photo_file.extension ?? 'jpg'),
-      )
-    );
-
-    final response = await request.send();
-
-    return response;
-  }
 
   @override
   build(BuildContext context) {
@@ -119,10 +90,13 @@ class _HomeState extends State<Home> {
     }
 
     selectDate() async {
+      final initialDate = this._birth_dateController.text != '' ? DateTime.parse(this._birth_dateController.text) : null;
+
       final date = await showDatePicker(
         context: context,
+        initialDate: initialDate,
         firstDate: DateTime.parse('1920-01-01'),
-        lastDate: DateTime.now()
+        lastDate: DateTime.now(),
       );
 
       if (date == null) {
@@ -163,7 +137,7 @@ class _HomeState extends State<Home> {
       context.loaderOverlay.show();
 
       try {
-        response = await this.sendData(
+        response = await sendData(
           name: this._nameController.text,
           dni: this._dniController.text,
           birth_date: this._birth_dateController.text,
@@ -272,6 +246,7 @@ class _HomeState extends State<Home> {
                     InputTextField(
                       label: 'Birth Date',
                       readOnly: true,
+                      canRequestFocus: false,
                       controller: this._birth_dateController,
                       style: const TextStyle(color: Colors.white),
 
