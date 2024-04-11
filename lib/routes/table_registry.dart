@@ -27,19 +27,19 @@ class _TableRegistryState extends State<TableRegistry> {
     this.fetchData();
   }
 
-  setData(List<Registry>? newValue) {
+  void setData(List<Registry>? newValue) {
     setState(() {
       this.data = newValue;
     });
   }
 
-  setIsLoading(bool newValue) {
+  void setIsLoading(bool newValue) {
     setState(() {
       this.isLoading = newValue;
     });
   }
 
-  Future fetchData({String? filter}) async {
+  Future<void> fetchData({String? filter}) async {
     late final List<Registry> data;
 
     setIsLoading(true);
@@ -74,10 +74,10 @@ class _TableRegistryState extends State<TableRegistry> {
 
   var isLoading = false;
 
-  filterChange(String filterValue, {required BuildContext context}) async {
+  Future<void> filterChange(String filterValue, {required BuildContext context}) async {
     await this._fetchTimeout?.cancel();
 
-    this._fetchTimeout = Future
+    this._fetchTimeout = Future<dynamic>
       .delayed(Duration(milliseconds: this._filterDelay))
       .asStream()
       .listen((event) {

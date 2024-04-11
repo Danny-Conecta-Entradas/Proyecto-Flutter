@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart' show AppBar, BoxDecoration, BuildContext, Color, Colors, Container, DefaultTextStyle, Drawer, DrawerHeader, EdgeInsets, FractionallySizedBox, GlobalKey, Icon, Icons, ListTile, ListView, MaterialApp, MaterialPageRoute, Navigator, NavigatorState, Scaffold, ScaffoldState, StatelessWidget, Text, TextStyle, ThemeData, Widget, runApp;
+import 'package:flutter/material.dart' show AppBar, Axis, BoxDecoration, BuildContext, Color, Colors, Container, DefaultTextStyle, Drawer, DrawerHeader, EdgeInsets, Expanded, Flex, FractionallySizedBox, GlobalKey, Icon, Icons, ListTile, ListView, MainAxisAlignment, MainAxisSize, MaterialApp, MaterialPageRoute, Navigator, NavigatorState, Scaffold, ScaffoldState, StatelessWidget, Text, TextStyle, ThemeData, Widget, runApp;
 import 'package:loader_overlay/loader_overlay.dart' show LoaderOverlay;
 import '/routes.dart' show routes;
+import '/widgets.dart' show Box;
 
 
 /// Handle nested navigation
@@ -36,18 +37,29 @@ class AppRoot extends StatelessWidget {
           child: DefaultTextStyle(
             style: const TextStyle(color: Colors.white),
 
-            child: FractionallySizedBox(
+            // child: FractionallySizedBox(
+            //   widthFactor: 1.0,
+            //   heightFactor: 1.0,
+
+            //   child: Container(
+            //     padding: const EdgeInsets.all(10),
+            //     color: const Color.fromARGB(255, 5, 69, 109),
+
+            //     child: Flex(direction: Axis.vertical, children: [Expanded(child: AppNavigation(routes: routes))],),
+            //   ),
+            // ),
+            child: Box(
               widthFactor: 1.0,
               heightFactor: 1.0,
 
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                color: const Color.fromARGB(255, 5, 69, 109),
+              padding: const EdgeInsets.all(10),
+              backgroundColor: const Color.fromARGB(255, 5, 69, 109),
 
-                child: AppNavigation(routes: routes),
-              )
-            )
-          )
+              expandChild: true,
+
+              child: AppNavigation(routes: routes),
+            ),
+          ),
         ),
       ),
     );

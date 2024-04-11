@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' show AlertDialog, BuildContext, Navigator, Text, TextButton, Widget, showDialog;
 import 'dart:math' as Math;
 
-milisecondsTimeStampToYearMonthDay(int timestamp) {
+String milisecondsTimeStampToYearMonthDay(int timestamp) {
   final datetime = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
   final yearLength = datetime.year.toString().length;
@@ -17,7 +17,7 @@ milisecondsTimeStampToYearMonthDay(int timestamp) {
   return dateString;
 }
 
-showAlertDialog({required BuildContext context, required String title, String? message, Widget? messageChild, String? okText}) {
+Future<void> showAlertDialog({required BuildContext context, required String title, String? message, Widget? messageChild, String? okText}) {
   if (message == null && messageChild == null) {
     throw Exception('Both message and messageWidget cannot be null.');
   }

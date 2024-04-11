@@ -18,20 +18,20 @@ class Registry {
 
   final String? photo_url;
 
-  static fromJSON(dynamic data) {
+  static Registry fromJSON(dynamic data) {
     return Registry(
-      creation_date: data['creation_date'],
-      name: data['name'],
-      dni: data['dni'],
-      birth_date: data['birth_date'],
-      photo_url: data['photo_url'],
+      creation_date: data['creation_date'] as int,
+      name: data['name'] as String,
+      dni: data['dni'] as String,
+      birth_date: data['birth_date'] as int,
+      photo_url: data['photo_url'] as String?,
     );
   }
 
   static List<Registry> fromJSONArray(dynamic list) {
     final registryList = <Registry>[];
 
-    for (final item in list) {
+    for (final item in list as Iterable) {
       final registry = Registry.fromJSON(item);
       registryList.add(registry);
     }
@@ -80,7 +80,12 @@ Future<List<Registry>> getData({String? filter}) async {
 }
 
 
-sendData({required String name, required String dni, required String birth_date, required PlatformFile photo_file}) async {
+Future<http.StreamedResponse> sendData({
+  required String name,
+  required String dni,
+  required String birth_date,
+  required PlatformFile photo_file
+}) async {
   final url = Uri.https('proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app', '/api/send-data/');
 
   // final url = Uri.http('10.0.2.2:8080', '/api/send-data/');

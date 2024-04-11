@@ -1,13 +1,48 @@
-import 'package:flutter/material.dart' show Alignment, AlignmentGeometry, Axis, BorderSide, BoxBorder, BoxConstraints, BoxDecoration, Clip, Color, Colors, Container, CrossAxisAlignment, Decoration, EdgeInsetsGeometry, Flex, FontWeight, InputDecoration, MainAxisAlignment, MainAxisSize, Matrix4, StatelessWidget, TextBaseline, TextDirection, TextEditingController, TextFormField, TextStyle, UnderlineInputBorder, VerticalDirection, Widget;
+import 'package:flutter/material.dart' show Alignment, AlignmentGeometry, Axis, BorderSide, BoxBorder, BoxConstraints, BoxDecoration, Clip, Color, Colors, Container, CrossAxisAlignment, Decoration, EdgeInsetsGeometry, Expanded, Flex, FontWeight, FractionallySizedBox, InputDecoration, MainAxisAlignment, MainAxisSize, Matrix4, StatelessWidget, TextBaseline, TextDirection, TextEditingController, TextFormField, TextStyle, UnderlineInputBorder, VerticalDirection, Widget;
 
 /// General layout component to avoid too much boilerplate
 class Box extends StatelessWidget {
 
-  const Box({super.key, this.backgroundColor, this.direction, this.mainAxisAlignment, this.crossAxisAlignment, this.mainAxisDirection, this.mainAxisSize, this.clipBehavior, this.textDirection, this.textBaseline, this.child, this.children, this.border, this.constraints, this.padding, this.width, this.height, this.alignment, this.margin, this.transform, this.transformAlignment, this.foregroundDecoration});
+  const Box({
+    super.key,
+    this.backgroundColor,
+    this.direction,
+    this.mainAxisAlignment,
+    this.crossAxisAlignment,
+    this.mainAxisDirection,
+    this.mainAxisSize,
+    this.clipBehavior,
+    this.textDirection,
+    this.textBaseline,
+    this.child,
+    this.children,
+    this.border,
+    this.constraints,
+    this.padding,
+    this.width,
+    this.height,
+    this.widthFactor,
+    this.heightFactor,
+    this.alignment,
+    this.margin,
+    this.transform,
+    this.transformAlignment,
+    this.foregroundDecoration,
+    this.expandChild = false,
+  });
 
   final double? width;
 
   final double? height;
+
+  final double? widthFactor;
+
+  final double? heightFactor;
+
+  /// Wrap the [Widget] passed to [child] named parameter
+  /// in a [Expanded] Widget for those widgets that need fit the available space
+  /// and avoid render errors like overflowing the internal [Flex] parent.
+  final bool expandChild;
 
   final Alignment? alignment;
 
@@ -47,13 +82,17 @@ class Box extends StatelessWidget {
 
   final List<Widget>? children;
 
+  dynamic ses() {
+
+  }
+
   @override
   build(context) {
     if (this.child != null && this.children != null) {
       throw Exception('Both child and children cannot be specified. Use only one of them.');
     }
 
-    return Container(
+    final container = Container(
       width: width,
       height: height,
 
@@ -86,14 +125,36 @@ class Box extends StatelessWidget {
         textBaseline: textBaseline,
         textDirection: textDirection,
 
-        children: child != null ? [child!] : (children ?? []),
+        children: this.child != null
+          ? [this.expandChild ? Expanded(child: this.child!) : this.child!]
+          : (this.children ?? [])
+        ,
       ),
     );
+
+    if (width != null && widthFactor != null) {
+      throw Exception('Both width and widthFactor cannot be specified. Use only one of them.');
+    }
+
+    if (height != null && heightFactor != null) {
+      throw Exception('Both height and heightFactor cannot be specified. Use only one of them.');
+    }
+
+    if (widthFactor != null || heightFactor != null) {
+      return FractionallySizedBox(
+        widthFactor: this.widthFactor,
+        heightFactor: this.heightFactor,
+
+        child: container,
+      );
+    }
+
+    return container;
   }
 
 }
 
-createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
+InputDecoration createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
   const baseInputDecorationSettings = {
     'labelStyle': TextStyle(color: Color.fromARGB(255, 255, 255, 255), fontSize: 18, fontWeight: FontWeight.bold),
     'hintStyle': TextStyle(color: Color.fromARGB(255, 159, 159, 159)),
@@ -110,7 +171,7 @@ createInputDecoration(Map<String, dynamic> inputDecorationSettings) {
   }
   .map((key, value) => MapEntry(Symbol(key), value));
 
-  final inputDecoration = Function.apply(InputDecoration.new, [], mixedInputDecorationSettigns);
+  final inputDecoration = Function.apply(InputDecoration.new, [], mixedInputDecorationSettigns) as InputDecoration;
 
   return inputDecoration;
 }
