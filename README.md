@@ -51,6 +51,7 @@ https://docs.flutter.dev/cookbook/images/network-image
 https://stackoverflow.com/questions/15295834/how-to-use-setinterval-settimeout-in-dart-sdk-0-4  
 https://dart.dev/language/extension-types  
 https://stackoverflow.com/questions/49713189/how-to-use-conditional-statement-within-child-attribute-of-a-flutter-widget-cen  
+https://stackoverflow.com/questions/50670325/how-to-use-a-for-loop-inside-children-of-a-widget
 https://dart.dev/tools/analysis  
 
 
