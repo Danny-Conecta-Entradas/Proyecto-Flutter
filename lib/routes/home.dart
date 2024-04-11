@@ -219,7 +219,8 @@ class _HomeState extends State<Home> {
 
                 child: Text(
                   'Send Data',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
               ),
               InputTextField(
                 label: 'Name',
