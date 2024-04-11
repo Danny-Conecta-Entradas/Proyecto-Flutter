@@ -17,12 +17,12 @@ milisecondsTimeStampToYearMonthDay(int timestamp) {
   return dateString;
 }
 
-showAlertDialog({required BuildContext context, required String title, String? message, Widget? messageWidget, String? okText}) {
-  if (message == null && messageWidget == null) {
+showAlertDialog({required BuildContext context, required String title, String? message, Widget? messageChild, String? okText}) {
+  if (message == null && messageChild == null) {
     throw Exception('Both message and messageWidget cannot be null.');
   }
 
-  if (message != null && messageWidget != null) {
+  if (message != null && messageChild != null) {
     throw Exception('Both message and messageWidget cannot be specified, only one must be present.');
   }
 
@@ -31,7 +31,7 @@ showAlertDialog({required BuildContext context, required String title, String? m
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(title),
-        content: message != null ? Text(message) : messageWidget,
+        content: message != null ? Text(message) : messageChild,
         actions: [
           TextButton(
             onPressed: () {Navigator.pop(context);},

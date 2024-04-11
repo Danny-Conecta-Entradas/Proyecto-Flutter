@@ -150,7 +150,7 @@ class _HomeState extends State<Home> {
             context: context,
             title: 'An error happened',
             okText: 'Accept',
-            messageWidget: Flex(
+            messageChild: Flex(
               direction: Axis.vertical,
               mainAxisSize: MainAxisSize.min,
               children: [
