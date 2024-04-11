@@ -1,4 +1,15 @@
-import 'package:flutter/material.dart' show Alignment, AlignmentGeometry, Axis, BorderSide, BoxBorder, BoxConstraints, BoxDecoration, Clip, Color, Colors, Container, CrossAxisAlignment, Decoration, EdgeInsetsGeometry, Expanded, Flex, FontWeight, FractionallySizedBox, InputDecoration, MainAxisAlignment, MainAxisSize, Matrix4, StatelessWidget, TextBaseline, TextDirection, TextEditingController, TextFormField, TextStyle, UnderlineInputBorder, VerticalDirection, Widget;
+import 'package:flutter/material.dart' show Alignment, AlignmentGeometry, Axis, BlendMode, BorderRadius, BorderSide, BoxBorder, BoxConstraints, BoxDecoration, BoxShadow, BoxShape, Clip, Color, Colors, Container, CrossAxisAlignment, Decoration, DecorationImage, EdgeInsetsGeometry, Expanded, Flex, FontWeight, FractionallySizedBox, Gradient, InputDecoration, MainAxisAlignment, MainAxisSize, Matrix4, SizedBox, StatelessWidget, TextBaseline, TextDirection, TextEditingController, TextFormField, TextStyle, UnderlineInputBorder, VerticalDirection, Widget;
+
+class Empty extends StatelessWidget {
+
+  const Empty({super.key});
+
+  @override
+  build(context) {
+    return const SizedBox();
+  }
+
+}
 
 /// General layout component to avoid too much boilerplate
 class Box extends StatelessWidget {
@@ -29,6 +40,15 @@ class Box extends StatelessWidget {
     this.transformAlignment,
     this.foregroundDecoration,
     this.expandChild = false,
+    this.borderRadius,
+    this.backgroundBlendMode,
+    this.boxShadow,
+    this.gradient,
+    this.image,
+    this.shape = BoxShape.rectangle,
+    this.horizontalGap,
+    this.verticalGap,
+    this.childGap,
   });
 
   final double? width;
@@ -72,24 +92,48 @@ class Box extends StatelessWidget {
 
   final MainAxisSize? mainAxisSize;
 
+  final double? horizontalGap;
+
+  final double? verticalGap;
+
+  final Widget? childGap;
+
   final Clip? clipBehavior;
 
   final TextDirection? textDirection;
 
   final TextBaseline? textBaseline;
 
+  final BorderRadius? borderRadius;
+
+  final BlendMode? backgroundBlendMode;
+
+  final List<BoxShadow>? boxShadow;
+
+  final Gradient? gradient;
+
+  final DecorationImage? image;
+
+  final BoxShape shape;
+
   final Widget? child;
 
   final List<Widget>? children;
-
-  dynamic ses() {
-
-  }
 
   @override
   build(context) {
     if (this.child != null && this.children != null) {
       throw Exception('Both child and children cannot be specified. Use only one of them.');
+    }
+
+    var children = this.children ?? [];
+
+    if (this.horizontalGap != null || this.verticalGap != null || this.childGap != null) {
+      // https://github.com/flutter/flutter/issues/16957#issuecomment-488153375
+      children = children.expand((child) sync* {
+        yield SizedBox(width: this.horizontalGap, height: this.verticalGap, child: this.childGap);
+        yield child;
+      }).skip(1).toList();
     }
 
     final container = Container(
@@ -102,6 +146,12 @@ class Box extends StatelessWidget {
       decoration: BoxDecoration(
         color: this.backgroundColor,
         border: border,
+        borderRadius: this.borderRadius,
+        backgroundBlendMode: this.backgroundBlendMode,
+        boxShadow: this.boxShadow,
+        gradient: this.gradient,
+        image: this.image,
+        shape: this.shape,
       ),
 
       padding: padding,
@@ -127,7 +177,7 @@ class Box extends StatelessWidget {
 
         children: this.child != null
           ? [this.expandChild ? Expanded(child: this.child!) : this.child!]
-          : (this.children ?? [])
+          : children
         ,
       ),
     );

@@ -37,17 +37,6 @@ class AppRoot extends StatelessWidget {
           child: DefaultTextStyle(
             style: const TextStyle(color: Colors.white),
 
-            // child: FractionallySizedBox(
-            //   widthFactor: 1.0,
-            //   heightFactor: 1.0,
-
-            //   child: Container(
-            //     padding: const EdgeInsets.all(10),
-            //     color: const Color.fromARGB(255, 5, 69, 109),
-
-            //     child: Flex(direction: Axis.vertical, children: [Expanded(child: AppNavigation(routes: routes))],),
-            //   ),
-            // ),
             child: Box(
               widthFactor: 1.0,
               heightFactor: 1.0,

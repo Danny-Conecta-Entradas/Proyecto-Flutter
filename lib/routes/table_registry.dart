@@ -1,6 +1,6 @@
 import 'dart:async' show StreamSubscription;
 
-import 'package:flutter/material.dart' show Axis, BoxDecoration, BuildContext, Colors, CrossAxisAlignment, EdgeInsets, Flex, Image, IntrinsicColumnWidth, MainAxisAlignment, SingleChildScrollView, SizedBox, State, StatefulWidget, Table, TableBorder, TableCell, TableCellVerticalAlignment, TableRow, Text, TextStyle;
+import 'package:flutter/material.dart' show Axis, BoxDecoration, BuildContext, Colors, EdgeInsets, Image, IntrinsicColumnWidth, MainAxisAlignment, SingleChildScrollView, State, StatefulWidget, Table, TableBorder, TableCell, TableCellVerticalAlignment, TableRow, Text, TextStyle;
 import 'dart:math' as Math;
 
 import '/api.dart' show Registry, getData;
@@ -93,9 +93,8 @@ class _TableRegistryState extends State<TableRegistry> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
 
-        child: Flex(
-          direction: Axis.vertical,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Box(
+          verticalGap: 20,
 
           children: [
             Box(
@@ -109,7 +108,6 @@ class _TableRegistryState extends State<TableRegistry> {
                 onChange: (filterValue) => this.filterChange(filterValue, context: context),
               ),
             ),
-            const SizedBox(height: 20,),
             if (this.isLoading)
               const Box(child: Text('Loading Data...'))
             else

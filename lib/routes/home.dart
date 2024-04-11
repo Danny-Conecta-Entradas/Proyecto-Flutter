@@ -1,13 +1,7 @@
 
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart' show
-  State, GlobalKey, TextEditingController, StatefulWidget,
-  BuildContext, FormState, showDatePicker,
-  Text, SizedBox, Flex, Axis, ElevatedButton,
-  MainAxisSize, Container, EdgeInsets, Colors, Color, SingleChildScrollView,
-  MainAxisAlignment, Form, TextStyle, BoxConstraints, Center,
-  BoxDecoration, BorderRadius, Border, Radius, FontWeight, Icons, Icon
+import 'package:flutter/material.dart' show Axis, Border, BorderRadius, BoxConstraints, BuildContext, Center, Color, Colors, Container, CrossAxisAlignment, EdgeInsets, ElevatedButton, Flex, FontWeight, Form, FormState, GlobalKey, Icon, Icons, MainAxisAlignment, MainAxisSize, Radius, SingleChildScrollView, SizedBox, State, StatefulWidget, Text, TextEditingController, TextStyle, showDatePicker
 ;
 import 'package:form_builder_file_picker/form_builder_file_picker.dart' show
   FormBuilderFilePicker, PlatformFile, FileType, TypeSelector
@@ -16,7 +10,7 @@ import 'package:loader_overlay/loader_overlay.dart' show OverlayControllerWidget
 import 'package:http/http.dart' as http;
 import '/api.dart' show sendData;
 import '/utils.dart' show showAlertDialog;
-import '/widgets.dart' show InputTextField, createInputDecoration;
+import '/widgets.dart' show Box, InputTextField, createInputDecoration;
 
 class Home extends StatefulWidget {
 
@@ -203,97 +197,90 @@ class _HomeState extends State<Home> {
       heightFactor: 1.0,
 
       child: SingleChildScrollView(
-        child: Flex(
-          direction: Axis.vertical,
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Form(
+          key: this._formKey,
 
-          children: [
-            Form(
-              key: this._formKey,
+          child: Box(
+            constraints: const BoxConstraints(minHeight: 400),
+            padding: const EdgeInsets.all(20),
 
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 400),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 105, 23, 168),
-                  border: Border.all(width: 2, color: const Color.fromARGB(255, 255, 255, 255)),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
+            backgroundColor: const Color.fromARGB(255, 105, 23, 168),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            border: Border.all(width: 2, color: const Color.fromARGB(255, 255, 255, 255)),
 
-                child: Flex(
-                  direction: Axis.vertical,
-                  mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
 
-                  children: [
-                    const Text('Send Data', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                    const SizedBox(height: 40,),
-                    InputTextField(
-                      label: 'Name',
-                      controller: this._nameController,
-                      style: const TextStyle(color: Colors.white),
+            verticalGap: 20,
 
-                      validator: nameValidator,
-                    ),
-                    const SizedBox(height: 20,),
-                    InputTextField(
-                      label: 'DNI',
-                      controller: this._dniController,
-                      style: const TextStyle(color: Colors.white),
+            children: [
+              const Box(
+                margin: EdgeInsets.only(bottom: 20),
 
-                      validator: dniValidator,
-                    ),
-                    const SizedBox(height: 20,),
-                    InputTextField(
-                      label: 'Birth Date',
-                      readOnly: true,
-                      canRequestFocus: false,
-                      controller: this._birth_dateController,
-                      style: const TextStyle(color: Colors.white),
+                child: Text(
+                  'Send Data',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+              ),
+              InputTextField(
+                label: 'Name',
+                controller: this._nameController,
+                style: const TextStyle(color: Colors.white),
 
-                      onTap: selectDate,
+                validator: nameValidator,
+              ),
+              InputTextField(
+                label: 'DNI',
+                controller: this._dniController,
+                style: const TextStyle(color: Colors.white),
 
-                      validator: birth_dateValidator,
-                    ),
-                    const SizedBox(height: 20,),
-                    FormBuilderFilePicker(
-                      maxFiles: 1,
-                      name: "Photo",
-                      decoration: createInputDecoration({'labelText': 'Photo'}),
-                      withData: true,
-                      previewImages: true,
-                      onChanged: onFileSelect,
-                      typeSelectors: [
-                        TypeSelector(
-                          type: FileType.image,
-                          selector: Flex(
-                            direction: Axis.horizontal,
+                validator: dniValidator,
+              ),
+              InputTextField(
+                label: 'Birth Date',
+                readOnly: true,
+                canRequestFocus: false,
+                controller: this._birth_dateController,
+                style: const TextStyle(color: Colors.white),
 
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: const Icon(Icons.add_circle),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.only(top: 10, left: 8.0),
-                                child: const Text("Select image"),
-                              ),
-                            ],
-                          ),
+                onTap: selectDate,
+
+                validator: birth_dateValidator,
+              ),
+              FormBuilderFilePicker(
+                maxFiles: 1,
+                name: "Photo",
+                decoration: createInputDecoration({'labelText': 'Photo'}),
+                withData: true,
+                previewImages: true,
+                onChanged: onFileSelect,
+                typeSelectors: [
+                  TypeSelector(
+                    type: FileType.image,
+                    selector: Flex(
+                      direction: Axis.horizontal,
+
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: const Icon(Icons.add_circle),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 10, left: 8.0),
+                          child: const Text("Select image"),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20,),
-                    ElevatedButton(
-                      onPressed: submit,
-
-                      child: const Text('Submit'),
-                    ),
-                  ],
-                )
+                  ),
+                ],
               ),
-            )
-          ],
-        )
+              ElevatedButton(
+                onPressed: submit,
+
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
+        ),
       )
     );
   }
